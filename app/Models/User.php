@@ -21,7 +21,8 @@ class User extends Authenticatable
         'email',
         'login',
         'password',
-        'location_id'
+        'address_id',
+        'phone_number',
     ];
 
     /**
@@ -30,7 +31,8 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $hidden = [
-        'location_id',
+        'company',
+        'company_id',
         'password',
         'remember_token',
         'created_at',
@@ -38,16 +40,22 @@ class User extends Authenticatable
     ];
 
     protected $appends = [
-        'location'
+        'company_name',
+        'company_address'
     ];
 
-    public function location()
+    public function company()
     {
-        return $this->hasOne(Location::class, 'id', 'location_id');
+        return $this->belongsTo(Company::class);
     }
 
-    public function getLocationAttribute()
+    public function getCompanyAddressAttribute()
     {
-        return $this->location()->first();
+        return $this->company->address;
+    }
+
+    public function getCompanyNameAttribute()
+    {
+        return $this->company->name;
     }
 }

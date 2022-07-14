@@ -14,7 +14,7 @@ class IndexTest extends TestCase
 
         $response->assertStatus(200)
         ->assertJson([
-            'message' => 'Welcome to API',
+            'message' => 'Welcome to Vibbraneo API',
             'status' => 'success',
         ]);
     }

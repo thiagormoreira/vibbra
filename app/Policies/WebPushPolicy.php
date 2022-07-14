@@ -3,9 +3,10 @@
 namespace App\Policies;
 
 use App\Models\User;
+use App\Models\WebPush;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
-class UserPolicy
+class WebPushPolicy
 {
     use HandlesAuthorization;
 
@@ -24,10 +25,10 @@ class UserPolicy
      * Determine whether the user can view the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\user  $model
+     * @param  \App\Models\WebPush  $webPush
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function view(User $user, user $model)
+    public function view(User $user, WebPush $webPush)
     {
         //
     }
@@ -40,17 +41,17 @@ class UserPolicy
      */
     public function create(User $user)
     {
-        return true;
+        //
     }
 
     /**
      * Determine whether the user can update the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\user  $model
+     * @param  \App\Models\WebPush  $webPush
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function update(User $user, user $model)
+    public function update(User $user, WebPush $webPush)
     {
         //
     }
@@ -59,10 +60,10 @@ class UserPolicy
      * Determine whether the user can delete the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\user  $model
+     * @param  \App\Models\WebPush  $webPush
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function delete(User $user, user $model)
+    public function delete(User $user, WebPush $webPush)
     {
         //
     }
@@ -71,10 +72,10 @@ class UserPolicy
      * Determine whether the user can restore the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\user  $model
+     * @param  \App\Models\WebPush  $webPush
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function restore(User $user, user $model)
+    public function restore(User $user, WebPush $webPush)
     {
         //
     }
@@ -83,10 +84,10 @@ class UserPolicy
      * Determine whether the user can permanently delete the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\user  $model
+     * @param  \App\Models\WebPush  $webPush
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function forceDelete(User $user, user $model)
+    public function forceDelete(User $user, WebPush $webPush)
     {
         //
     }

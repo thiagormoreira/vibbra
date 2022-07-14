@@ -10,7 +10,7 @@ use Tests\TestCase;
 
 class AuthenticateTest extends TestCase
 {
-    public function test_login()
+    public function test_login_success()
     {
         $user = User::factory()->create();
         $response = $this->post('/api/v1/login',
@@ -20,6 +20,32 @@ class AuthenticateTest extends TestCase
             ]
         );
 
-        $response->assertStatus(200);
+        $response->assertJsonStructure(
+            [
+                'token',
+                'user' => [
+                    'id',
+                    'name',
+                    'email',
+                ]
+            ]
+        )->assertStatus(200);
+    }
+
+    public function test_login_fail()
+    {
+        $user = User::factory()->create();
+        $response = $this->post('/api/v1/login',
+            [
+                'email' => $user->email,
+                'password' => 'wrong_password'
+            ]
+        );
+
+        $response->assertJsonStructure(
+            [
+                'error'
+            ]
+        )->assertStatus(401);
     }
 }

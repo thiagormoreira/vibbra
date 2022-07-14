@@ -10,7 +10,7 @@ class Authenticate extends Controller
     /**
      * Show the form for creating a new resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function login(Request $request)
     {
@@ -19,13 +19,20 @@ class Authenticate extends Controller
             'password'=>$request->password,
         ];
         if(auth()->attempt($login_credentials)){
-            //generate the token for the user
+
             $user_login_token= auth()->user()->createToken($login_credentials['email'])->accessToken;
-            //now return this token on success login attempt
-            return response()->json(['token' => $user_login_token], 200);
+
+            return response()->json([
+                'token' => $user_login_token,
+                'user' => [
+                    'id' => auth()->user()->id,
+                    'name' => auth()->user()->name,
+                    'email' => auth()->user()->email
+                ]
+            ], 200);
         }
         else{
-            //wrong login credentials, return, user not authorised to our system, return error code 401
+
             return response()->json(['error' => 'UnAuthorised Access'], 401);
         }
     }

@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreuserRequest;
-use App\Http\Requests\UpdateuserRequest;
-use App\Models\user;
+use App\Http\Requests\StoreUserRequest;
+use App\Http\Requests\UpdateUserRequest;
+use App\Models\Company;
+use App\Models\User;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class UserController extends Controller
 {
@@ -31,45 +33,62 @@ class UserController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \App\Http\Requests\StoreuserRequest  $request
-     * @return \Illuminate\Http\Response
+     * @param  \App\Http\Requests\StoreUserRequest  $request
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function store(StoreuserRequest $request)
+    public function store(StoreUserRequest $request, User $user)
     {
-        //
+        try {
+            $userData = $request->validated();
+
+            $user = User::create([
+                'name' => $userData['name'],
+                'email' => $userData['email'],
+                'phone_number' => $userData['phone_number'],
+                'password' => bcrypt($userData['password']),
+            ]);
+
+            $company = Company::create([
+                'name' => $userData['company_name'],
+                'address' => $userData['company_address'],
+            ]);
+
+            $user->company()->associate($company);
+
+            return response()->json($user, 201);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\user  $user
-     * @return \Illuminate\Http\Response
+     * @param  \App\Models\User  $user
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function show(user $user)
+    public function show($user_id)
     {
         try {
-            $user = user::findOrFail($user->id);
+            $user = User::findOrfail($user_id);
+
+            return response()->json($user, 200);
+
+        } catch (ModelNotFoundException $e) {
+
             return response()->json([
-                'message' => 'User found',
-                'status' => 'success',
-                'data' => $user
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'User not found',
-                'status' => 'error',
-                'data' => $e->getMessage()
-            ]);
+                'error' => 'User not found'
+            ], 404);
         }
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\user  $user
+     * @param  \App\Models\User  $user
      * @return \Illuminate\Http\Response
      */
-    public function edit(user $user)
+    public function edit(User $user)
     {
         //
     }
@@ -77,11 +96,11 @@ class UserController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \App\Http\Requests\UpdateuserRequest  $request
-     * @param  \App\Models\user  $user
+     * @param  \App\Http\Requests\UpdateUserRequest  $request
+     * @param  \App\Models\User  $user
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdateuserRequest $request, user $user)
+    public function update(UpdateUserRequest $request, User $user)
     {
         //
     }
@@ -89,10 +108,10 @@ class UserController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\user  $user
+     * @param  \App\Models\User  $user
      * @return \Illuminate\Http\Response
      */
-    public function destroy(user $user)
+    public function destroy(User $user)
     {
         //
     }
