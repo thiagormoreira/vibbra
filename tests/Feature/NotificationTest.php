@@ -33,8 +33,7 @@ class NotificationTest extends TestCase
 
         $response = $this->post("/api/v1/apps/{$app->id}/webpushes/notification", $data);
 
-        $response->assertJsonStructure($data)
-
+        $response->assertSimilarJson($data)
             ->assertStatus(201);
     }
 }

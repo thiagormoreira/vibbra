@@ -44,6 +44,11 @@ class NotificationController extends Controller
 
             $app = App::findOrFail($app_id);
             $channel = $app->channel()->first();
+            $webPush = $app->webPush()->first();
+
+            $webPush->site_url_icon = $notificationData['icon_url'];
+            $webPush->welcome_notification_url_redirect = $notificationData['redirect_url'];
+            $webPush->save();
 
             $notification = Notification::create([
                 'message_title' => $notificationData['message_title'],
@@ -60,10 +65,11 @@ class NotificationController extends Controller
                 ],
                 "message_title" => $notification->message_title,
                 "message_text" => $notification->message_text,
-                "icon_url" => $channel->webPush()->icon_url,
-                "redirect_url" => $channel->redirect_url,
+                "icon_url" => $webPush->site_url_icon,
+                "redirect_url" => $webPush->welcome_notification_url_redirect,
                 "app_id" => $app->id,
             ], 201);
+
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
         }

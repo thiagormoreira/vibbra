@@ -45,4 +45,9 @@ class App extends Model
     {
         return $this->hasOne(Channel::class);
     }
+
+    public function webPush()
+    {
+        return $this->hasOne(WebPush::class);
+    }
 }
