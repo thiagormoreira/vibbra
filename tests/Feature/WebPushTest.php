@@ -30,7 +30,7 @@ class WebPushTest extends TestCase
                     'address',
                     'url_icon'
                 ],
-                'alllow_notification' => [
+                'allow_notification' => [
                     'message_text',
                     'allow_button_text',
                     'deny_button_text'
@@ -74,5 +74,36 @@ class WebPushTest extends TestCase
             'channelable_id' => WebPush::first()->id,
             'status' => true
         ]);
+    }
+
+    public function test_post_web_push_settings()
+    {
+
+        $app = App::first();
+
+        $data = [
+            'settings' => [
+                'site' => [
+                    'name' => 'Test Site',
+                    'address' => 'http://test.com',
+                    'url_icon' => 'http://test.com/icon.png'
+                ],
+                'allow_notification' => [
+                    'message_text' => 'New Test Message Text',
+                    'allow_button_text' => 'New Test Allow Button Text',
+                    'deny_button_text' => 'New Test Deny Button Text'
+                ],
+                'welcome_notification' => [
+                    'message_title' => 'New Test Message Title',
+                    'message_text' => 'New Test Message Text',
+                    'enable_url_redirect' => true,
+                    'url_redirect' => 'http://test.com'
+                ]
+            ]
+        ];
+
+        $response = $this->post("/api/v1/apps/{$app->id}/webpushes/settings", $data);
+
+        $response->assertExactJson($data);
     }
 }

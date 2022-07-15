@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\App;
 use App\Models\WebPush;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -18,8 +19,9 @@ class ChannelFactory extends Factory
     public function definition()
     {
         return [
-            'channelable_id' => WebPush::factory()->create()->id,
+            'channelable_id' => WebPush::first()?->id ?? WebPush::factory()->create()->id,
             'channelable_type' => WebPush::class,
+            'app_id' => App::first()?->id ?? App::factory()->create()->id,
         ];
     }
 }

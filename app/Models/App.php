@@ -40,4 +40,9 @@ class App extends Model
     {
         return $this->id;
     }
+
+    public function channel()
+    {
+        return $this->hasOne(Channel::class);
+    }
 }

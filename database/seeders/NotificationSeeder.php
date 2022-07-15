@@ -19,7 +19,7 @@ class NotificationSeeder extends Seeder
         Notification::factory()->create([
             'message_title' => 'Notification Title',
             'message_text' => 'Notification Text',
-            'app_id' => App::first()->id,
+            'app_id' => App::first()->id ?? App::factory()->create()->id,
         ]);
     }
 }

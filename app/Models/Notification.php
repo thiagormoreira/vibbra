@@ -13,6 +13,7 @@ class Notification extends Model
         'message_title',
         'message_text',
         'app_id',
+        'channel_id',
     ];
 
     public function app()

@@ -13,12 +13,8 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('channels', function (Blueprint $table) {
-            $table->id();
-            $table->morphs('channelable');
-            $table->boolean('status')->default(false);
-            $table->unsignedBigInteger('app_id');
-            $table->timestamps();
+        Schema::table('channels', function (Blueprint $table) {;
+            $table->foreign('app_id')->references('id')->on('apps');
         });
     }
 
@@ -29,6 +25,8 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('channels');
+        Schema::table('channels', function (Blueprint $table) {
+            $table->dropForeign('channels_app_id_foreign');
+        });
     }
 };

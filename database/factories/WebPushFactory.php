@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 use App\Models\App;
 use App\Models\Channel;
+use App\Models\WebPush;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -32,7 +33,7 @@ class WebPushFactory extends Factory
             'welcome_notification_enable_url_redirect' => $this->faker->boolean,
             'welcome_notification_url_redirect' => $this->faker->url,
 
-            'app_id' => App::first()->id,
+            'app_id' => App::first()?->id ?? App::factory()->create()->id,
         ];
     }
 }

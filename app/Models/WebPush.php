@@ -20,6 +20,7 @@ class WebPush extends Model
         'welcome_notification_message_text',
         'welcome_notification_enable_url_redirect',
         'welcome_notification_url_redirect',
+        'app_id'
     ];
 
     public function notification()
@@ -35,5 +36,10 @@ class WebPush extends Model
     public function channel()
     {
         return $this->channelable()->first();
+    }
+
+    public function app()
+    {
+        return $this->belongsTo(App::class);
     }
 }

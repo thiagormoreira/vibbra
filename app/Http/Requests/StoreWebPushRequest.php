@@ -13,7 +13,7 @@ class StoreWebPushRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -24,7 +24,16 @@ class StoreWebPushRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'settings.site.name' => 'required|string|max:255',
+            'settings.site.address' => 'required|string|max:255',
+            'settings.site.url_icon' => 'required|string|max:255',
+            'settings.allow_notification.message_text' => 'required|string|max:255',
+            'settings.allow_notification.allow_button_text' => 'required|string|max:255',
+            'settings.allow_notification.deny_button_text' => 'required|string|max:255',
+            'settings.welcome_notification.message_title' => 'required|string|max:255',
+            'settings.welcome_notification.message_text' => 'required|string|max:255',
+            'settings.welcome_notification.enable_url_redirect' => 'required|boolean',
+            'settings.welcome_notification.url_redirect' => 'required|string|max:255',
         ];
     }
 }

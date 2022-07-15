@@ -29,6 +29,7 @@ return new class extends Migration
             $table->string('welcome_notification_url_redirect');
 
             $table->unsignedBigInteger('app_id');
+            //$table->unsignedBigInteger('channel_id')->nullable();
 
             $table->timestamps();
         });

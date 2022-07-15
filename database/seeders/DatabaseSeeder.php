@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Channel;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -13,13 +14,11 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-
         $this->call([
             UserSeeder::class,
             AppSeeder::class,
-            NotificationSeeder::class,
-            WebPushSeeder::class
+            ChannelSeeder::class,
+            NotificationSeeder::class
         ]);
-
     }
 }

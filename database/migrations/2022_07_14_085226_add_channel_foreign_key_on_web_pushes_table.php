@@ -13,10 +13,9 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table('web_pushes', function (Blueprint $table) {
-//            $table->unsignedBigInteger('channel_id');
+//        Schema::table('web_pushes', function (Blueprint $table) {
 //            $table->foreign('channel_id')->references('id')->on('channels');
-        });
+//        });
     }
 
     /**
@@ -26,9 +25,8 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table('web_pushes', function (Blueprint $table) {
-//            $table->dropColumn('channel_id');
+//        Schema::table('web_pushes', function (Blueprint $table) {
 //            $table->dropForeign('web_pushes_channel_id_foreign');
-        });
+//        });
     }
 };

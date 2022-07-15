@@ -20,7 +20,7 @@ class AppFactory extends Factory
         return [
             'name' => $this->faker->name,
             'token' => $this->faker->uuid,
-            'user_id' => User::first()->id,
+            'user_id' => User::first()?->id ?? User::factory()->create()->id,
         ];
     }
 }

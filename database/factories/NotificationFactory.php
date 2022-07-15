@@ -21,8 +21,8 @@ class NotificationFactory extends Factory
         return [
             'message_title' => $this->faker->text,
             'message_text' => $this->faker->text,
-            'app_id' => App::factory()->create()->id,
-            'channel_id' => Channel::factory()->create()->id,
+            'app_id' => App::first()->id ?? App::factory()->create()->id,
+            'channel_id' => Channel::first()->id ?? Channel::factory()->create()->id,
         ];
     }
 }

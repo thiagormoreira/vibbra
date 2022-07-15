@@ -19,4 +19,9 @@ class Channel extends Model
     {
         return $this->morphTo();
     }
+
+    public function webPush()
+    {
+        return $this->hasOne(WebPush::class);
+    }
 }

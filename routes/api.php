@@ -40,6 +40,9 @@ Route::group([
 
         Route::get('/apps/{app}/webpushes/settings', [\App\Http\Controllers\WebPushController::class, 'show']);
         Route::put('/apps/{app}/{channel}/settings', [\App\Http\Controllers\WebPushController::class, 'edit']);
+        Route::post('/apps/{app}/{channel}/settings', [\App\Http\Controllers\WebPushController::class, 'store']);
+
+        Route::post('/apps/{app}/{channel}/notification', [\App\Http\Controllers\NotificationController::class, 'store']);
 
     });
 

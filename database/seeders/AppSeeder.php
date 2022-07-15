@@ -17,7 +17,7 @@ class AppSeeder extends Seeder
     public function run()
     {
         App::factory()->create([
-            'user_id' => User::first()->id,
+            'user_id' => User::first()->id ?? User::factory()->create()->id,
         ]);
     }
 }

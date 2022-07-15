@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreWebPushRequest;
 use App\Http\Requests\UpdateWebPushRequest;
 use App\Models\WebPush;
+use Illuminate\Validation\ValidationException;
 
 class WebPushController extends Controller
 {
@@ -32,11 +33,33 @@ class WebPushController extends Controller
      * Store a newly created resource in storage.
      *
      * @param  \App\Http\Requests\StoreWebPushRequest  $request
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function store(StoreWebPushRequest $request)
+    public function store(StoreWebPushRequest $request, $app)
     {
-        //
+        try {
+            $data = $request->validated();
+
+            $formattedData = $this->formatData($data);
+
+            $webPush = WebPush::updateOrCreate([
+                'app_id' => $app,
+            ], $formattedData);
+
+            return response()->json($this->transformData($webPush));
+        }
+        catch (ValidationException $e) {
+            return response()->json([
+                'message' => $e->getMessage(),
+                'code' => $e->getCode(),
+            ], 400);
+        }
+        catch (\Exception $e) {
+            return response()->json([
+                'message' => $e->getMessage(),
+                'code' => $e->getCode(),
+            ], 500);
+        }
     }
 
     /**
@@ -113,7 +136,7 @@ class WebPushController extends Controller
         //
     }
 
-    public function transformData($webPush)
+    private function transformData(WebPush $webPush)
     {
         return [
             'settings' => [
@@ -122,7 +145,7 @@ class WebPushController extends Controller
                     'address' => $webPush->site_address,
                     'url_icon' => $webPush->site_url_icon,
                 ],
-                'alllow_notification' => [
+                'allow_notification' => [
                     'message_text' => $webPush->allow_notification_message_text,
                     'allow_button_text' => $webPush->allow_notification_allow_button_text,
                     'deny_button_text' => $webPush->allow_notification_deny_button_text,
@@ -134,6 +157,22 @@ class WebPushController extends Controller
                     'url_redirect' => $webPush->welcome_notification_url_redirect,
                 ]
             ]
+        ];
+    }
+
+    private function formatData(array $data)
+    {
+        return [
+            'site_name' => $data['settings']['site']['name'],
+            'site_address' => $data['settings']['site']['address'],
+            'site_url_icon' => $data['settings']['site']['url_icon'],
+            'allow_notification_message_text' => $data['settings']['allow_notification']['message_text'],
+            'allow_notification_allow_button_text' => $data['settings']['allow_notification']['allow_button_text'],
+            'allow_notification_deny_button_text' => $data['settings']['allow_notification']['deny_button_text'],
+            'welcome_notification_message_title' => $data['settings']['welcome_notification']['message_title'],
+            'welcome_notification_message_text' => $data['settings']['welcome_notification']['message_text'],
+            'welcome_notification_enable_url_redirect' => $data['settings']['welcome_notification']['enable_url_redirect'],
+            'welcome_notification_url_redirect' => $data['settings']['welcome_notification']['url_redirect'],
         ];
     }
 }
