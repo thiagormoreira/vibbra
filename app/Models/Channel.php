@@ -11,13 +11,14 @@ class Channel extends Model
 
     protected $fillable = [
         'app_id',
-        'channealable_id',
-        'channealable_type'
+        'channelable_id',
+        'channelable_type',
+        'status'
     ];
 
     public function handler()
     {
-        return $this->morphTo();
+        return $this->channelable_type::find($this->channelable_id);
     }
 
     public function webPush()

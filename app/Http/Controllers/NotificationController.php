@@ -3,48 +3,44 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreNotificationRequest;
-use App\Http\Requests\UpdateNotificationRequest;
 use App\Models\App;
-use App\Models\Channel;
 use App\Models\Notification;
-use App\Models\WebPush;
 
 class NotificationController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function index()
     {
-        //
+        try {
+
+            foreach (Notification::sent()->get() as $notification) {
+                $notifications['notifications'][] = [
+                    'notification_id' => $notification->id,
+                    'send_date' => $notification->send_date,
+                ];
+            }
+
+            return response()->json($notifications, 200);
+
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \App\Http\Requests\StoreNotificationRequest  $request
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function store(StoreNotificationRequest $request, $app_id)
     {
         try {
+
             $notificationData = $request->validated();
 
             $app = App::findOrFail($app_id);
-            $channel = $app->channel()->first();
-            $webPush = $app->webPush()->first();
+            $channel = $app->channel;
+            $webPush = $app->webPush;
+
+            if(!$channel->status){
+                return response()->json([
+                    'error' => 'Channel is not active'
+                ], 401);
+            }
 
             $webPush->site_url_icon = $notificationData['icon_url'];
             $webPush->welcome_notification_url_redirect = $notificationData['redirect_url'];
@@ -57,66 +53,40 @@ class NotificationController extends Controller
                 'channel_id' => $channel->id
             ]);
 
-            return response()->json([
-                "audience_segments" => [
-                    "audience_segment1",
-                    "Audience_segment2",
-                    "audience_segment3"
-                ],
-                "message_title" => $notification->message_title,
-                "message_text" => $notification->message_text,
-                "icon_url" => $webPush->site_url_icon,
-                "redirect_url" => $webPush->welcome_notification_url_redirect,
-                "app_id" => $app->id,
-            ], 201);
+            return response()->json($this->transformData($notification, $webPush), 201);
 
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
         }
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Notification  $notification
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Notification $notification)
+    public function show($app_id, $channel, $notification_id)
     {
-        //
+        try {
+            $notification = Notification::findOrFail($notification_id);
+            $app = App::findOrFail($app_id);
+            $webPush = $app->webPush;
+
+            return response()->json($this->transformData($notification, $webPush), 200);
+
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Notification  $notification
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Notification $notification)
+    private function transformData($notification, $webPush)
     {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \App\Http\Requests\UpdateNotificationRequest  $request
-     * @param  \App\Models\Notification  $notification
-     * @return \Illuminate\Http\Response
-     */
-    public function update(UpdateNotificationRequest $request, Notification $notification)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Notification  $notification
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Notification $notification)
-    {
-        //
+        return [
+            "audience_segments" => [
+                "audience_segment1",
+                "Audience_segment2",
+                "audience_segment3"
+            ],
+            "message_title" => $notification->message_title,
+            "message_text" => $notification->message_text,
+            "icon_url" => $webPush->site_url_icon,
+            "redirect_url" => $webPush->welcome_notification_url_redirect,
+            "app_id" => $notification->app_id,
+        ];
     }
 }

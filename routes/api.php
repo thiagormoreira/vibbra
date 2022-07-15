@@ -38,11 +38,13 @@ Route::group([
         Route::post('/apps', [\App\Http\Controllers\AppController::class, 'store']);
         Route::get('/apps/{app_id}', [\App\Http\Controllers\AppController::class, 'show']);
 
-        Route::get('/apps/{app}/webpushes/settings', [\App\Http\Controllers\WebPushController::class, 'show']);
-        Route::put('/apps/{app}/{channel}/settings', [\App\Http\Controllers\WebPushController::class, 'edit']);
-        Route::post('/apps/{app}/{channel}/settings', [\App\Http\Controllers\WebPushController::class, 'store']);
+        Route::get('/apps/{app_id}/{channel}/settings', [\App\Http\Controllers\ChannelController::class, 'show']);
+        Route::put('/apps/{app_id}/{channel}/settings', [\App\Http\Controllers\ChannelController::class, 'edit']);
+        Route::post('/apps/{app_id}/{channel}/settings', [\App\Http\Controllers\ChannelController::class, 'store']);
 
-        Route::post('/apps/{app}/{channel}/notification', [\App\Http\Controllers\NotificationController::class, 'store']);
+        Route::post('/apps/{app_id}/{channel}/notification', [\App\Http\Controllers\NotificationController::class, 'store']);
+        Route::get( '/apps/{app_id}/{channel}/notifications', [\App\Http\Controllers\NotificationController::class, 'index']);
+        Route::get( '/apps/{app_id}/{channel}/notifications/{notification_id}', [\App\Http\Controllers\NotificationController::class, 'show']);
 
     });
 

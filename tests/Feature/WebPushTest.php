@@ -11,11 +11,6 @@ use Tests\TestCase;
 
 class WebPushTest extends TestCase
 {
-    /**
-     * A basic feature test example.
-     *
-     * @return void
-     */
     public function test_get_web_push_settings()
     {
 

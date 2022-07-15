@@ -30,7 +30,7 @@ class WebPush extends Model
 
     public function channelable()
     {
-        return $this->morphOne(Channel::class, 'channelable');
+        return $this->morphOne(Channel::class, 'channelable', 'channelable_type', 'channelable_id');
     }
 
     public function channel()

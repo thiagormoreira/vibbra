@@ -11,11 +11,6 @@ use Tests\TestCase;
 
 class AppTest extends TestCase
 {
-    /**
-     * A basic feature test example.
-     *
-     * @return void
-     */
     public function test_app_post_return_201()
     {
         $newApp = [

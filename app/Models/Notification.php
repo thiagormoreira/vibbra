@@ -14,6 +14,14 @@ class Notification extends Model
         'message_text',
         'app_id',
         'channel_id',
+        'send_date'
+    ];
+
+    protected $hidden = [
+        'created_at',
+        'updated_at',
+        'app_id',
+        'channel_id'
     ];
 
     public function app()
@@ -24,5 +32,10 @@ class Notification extends Model
     public function channel()
     {
         return $this->hasOne(Channel::class);
+    }
+
+    public function scopeSent($query)
+    {
+        return $query->whereNotNull('send_date');
     }
 }

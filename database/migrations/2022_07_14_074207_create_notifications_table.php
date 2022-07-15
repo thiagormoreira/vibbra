@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('message_text');
             $table->unsignedBigInteger('app_id');
             $table->unsignedBigInteger('channel_id');
+            $table->date('send_date')->nullable();
             $table->timestamps();
         });
     }
