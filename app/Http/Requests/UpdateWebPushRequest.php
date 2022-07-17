@@ -13,7 +13,7 @@ class UpdateWebPushRequest extends FormRequest
      */
     public function authorize()
     {
-        return true;
+        return false;
     }
 
     /**
@@ -23,8 +23,6 @@ class UpdateWebPushRequest extends FormRequest
      */
     public function rules()
     {
-        return [
-            'status' => 'required|boolean',
-        ];
+        //
     }
 }

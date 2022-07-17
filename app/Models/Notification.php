@@ -38,4 +38,14 @@ class Notification extends Model
     {
         return $query->whereNotNull('send_date');
     }
+
+    public function scopeNotSent($query)
+    {
+        return $query->whereNull('send_date');
+    }
+
+    public function scopeSentDateBetween($query, $start, $end)
+    {
+        return $query->whereBetween('send_date', [$start, $end]);
+    }
 }

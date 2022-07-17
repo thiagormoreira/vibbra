@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\App;
 use App\Models\Notification;
+use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
@@ -67,17 +68,14 @@ class NotificationTest extends TestCase
     public function test_get_notifications_history()
     {
         $app = App::first();
+        $date = [
+            'start' => Carbon::now()->subDays(1)->format('Y-m-d'),
+            'end' => Carbon::now()->format('Y-m-d'),
+        ];
 
-        $response = $this->get("/api/v1/apps/{$app->id}/webpushes/notifications");
+        $response = $this->get("/api/v1/apps/{$app->id}/webpushes/notifications?initdate={$date['start']}&enddate={$date['end']}");
 
-        $response->assertJsonStructure([
-            'notifications' => [
-                '*' => [
-                    'notification_id',
-                    'send_date',
-                ]
-            ]
-        ])->assertStatus(200);
+        $response->assertJsonCount(10, 'notifications')->assertStatus(200);
     }
 
     public function test_show_notification_details()

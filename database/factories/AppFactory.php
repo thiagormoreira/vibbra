@@ -18,7 +18,7 @@ class AppFactory extends Factory
     public function definition()
     {
         return [
-            'name' => $this->faker->name,
+            'name' => $this->faker->company,
             'token' => $this->faker->uuid,
             'user_id' => User::first()?->id ?? User::factory()->create()->id,
         ];

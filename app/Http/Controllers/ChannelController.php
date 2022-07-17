@@ -2,34 +2,51 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\UpdateWebPushRequest;
+use App\Http\Requests\UpdateChannelRequest;
 use App\Http\Requests\StoreWebPushRequest;
+use App\Models\Email;
+use App\Models\Sms;
 use App\Models\WebPush;
-use Illuminate\Support\Facades\Request;
+use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 
 class ChannelController extends Controller
 {
-    public function store($app_id, $channel, \Illuminate\Http\Request $request)
+    public function store($app_id, $channel, Request $request)
     {
         try {
 
             switch ($channel){
                 case 'webpushes':
-                    //$request = new StoreWebPushRequest();
-                    //$data = $request->validated();
-                    $data = $request->all();
+                    $storeWebPushRequest = new StoreWebPushRequest();
+                    $data = $request->validate($storeWebPushRequest->rules(), $storeWebPushRequest->messages());
 
-                    $formattedData = $this->formatData($data);
+                    $formattedData = WebPush::formatData($data);
 
                     $channelInstance = WebPush::updateOrCreate([
                         'app_id' => $app_id,
                     ], $formattedData);
+
+                    return response()->json(WebPush::transformData($channelInstance));
                     break;
 
-            }
+                case 'emails':
+                    return response()->json([
+                        'message' => 'Not implemented yet'
+                    ], 400);
+                    break;
 
-            return response()->json($this->transformData($channelInstance));
+                case 'sms':
+                    return response()->json([
+                        'message' => 'Not implemented yet'
+                    ], 400);
+                    break;
+
+                default:
+                    return response()->json([
+                        'message' => "Invalid channel",
+                    ], 404);
+            }
         }
         catch (ValidationException $e) {
             return response()->json([
@@ -45,12 +62,35 @@ class ChannelController extends Controller
         }
     }
 
-    public function show($app)
+    public function show($app, $channel)
     {
         try{
-            $webPush = WebPush::where('app_id', $app)->first();
 
-            return response()->json($this->transformData($webPush));
+            switch ($channel){
+                case 'webpushes':
+                    $webPushConfig = WebPush::where('app_id', $app)->first();
+
+                    return response()->json(WebPush::transformData($webPushConfig));
+                    break;
+
+                case 'emails':
+                    $emailConfig = Email::where('app_id', $app)->first();
+
+                    return response()->json(Email::transformData($emailConfig));
+                    break;
+
+                case 'sms':
+                    $smsConfig = Sms::where('app_id', $app)->first();
+
+                    return response()->json(Sms::transformData($smsConfig));
+                    break;
+
+                default:
+                    return response()->json([
+                        'message' => "Invalid channel",
+                    ], 404);
+
+            }
 
         } catch (\Exception $e) {
             return response()->json([
@@ -59,18 +99,35 @@ class ChannelController extends Controller
         }
     }
 
-    public function edit(UpdateWebPushRequest $request, $app)
+    public function edit(UpdateChannelRequest $request, $app, $channel)
     {
         try{
             $data = $request->validated();
 
-            $webPush = WebPush::where('app_id', $app)->first();
+            switch ($channel){
+                case 'webpushes':
 
-            $channel = $webPush->channel();
-            $previousStatus = $channel->status ? true : false;
+                    $webPush = WebPush::where('app_id', $app)->first();
 
-            $channel->status = $data['status'];
-            $channel->save();
+                    $channel = $webPush->channel();
+                    $previousStatus = $channel->status ? true : false;
+
+                    $channel->status = $data['status'];
+                    $channel->save();
+                    break;
+
+                case 'emails':
+                    return response()->json([
+                        'message' => 'Not implemented yet'
+                    ], 400);
+                    break;
+
+                case 'sms':
+                    return response()->json([
+                        'message' => 'Not implemented yet'
+                    ], 400);
+                    break;
+            }
 
             return response()->json([
                 'previous_status' => $previousStatus,
@@ -82,45 +139,5 @@ class ChannelController extends Controller
                 'message' => $e->getMessage(),
             ]);
         }
-    }
-
-    private function transformData(WebPush $webPush)
-    {
-        return [
-            'settings' => [
-                'site' => [
-                    'name' => $webPush->site_name,
-                    'address' => $webPush->site_address,
-                    'url_icon' => $webPush->site_url_icon,
-                ],
-                'allow_notification' => [
-                    'message_text' => $webPush->allow_notification_message_text,
-                    'allow_button_text' => $webPush->allow_notification_allow_button_text,
-                    'deny_button_text' => $webPush->allow_notification_deny_button_text,
-                ],
-                'welcome_notification' => [
-                    'message_title' => $webPush->welcome_notification_message_title,
-                    'message_text' => $webPush->welcome_notification_message_text,
-                    'enable_url_redirect' => $webPush->welcome_notification_enable_url_redirect,
-                    'url_redirect' => $webPush->welcome_notification_url_redirect,
-                ]
-            ]
-        ];
-    }
-
-    private function formatData(array $data)
-    {
-        return [
-            'site_name' => $data['settings']['site']['name'],
-            'site_address' => $data['settings']['site']['address'],
-            'site_url_icon' => $data['settings']['site']['url_icon'],
-            'allow_notification_message_text' => $data['settings']['allow_notification']['message_text'],
-            'allow_notification_allow_button_text' => $data['settings']['allow_notification']['allow_button_text'],
-            'allow_notification_deny_button_text' => $data['settings']['allow_notification']['deny_button_text'],
-            'welcome_notification_message_title' => $data['settings']['welcome_notification']['message_title'],
-            'welcome_notification_message_text' => $data['settings']['welcome_notification']['message_text'],
-            'welcome_notification_enable_url_redirect' => $data['settings']['welcome_notification']['enable_url_redirect'],
-            'welcome_notification_url_redirect' => $data['settings']['welcome_notification']['url_redirect'],
-        ];
     }
 }

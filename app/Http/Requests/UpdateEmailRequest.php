@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateChannelRequest extends FormRequest
+class UpdateEmailRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -13,7 +13,7 @@ class UpdateChannelRequest extends FormRequest
      */
     public function authorize()
     {
-        return true;
+        return false;
     }
 
     /**
@@ -24,7 +24,7 @@ class UpdateChannelRequest extends FormRequest
     public function rules()
     {
         return [
-            'status' => 'required|boolean',
+            //
         ];
     }
 }

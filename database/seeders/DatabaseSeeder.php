@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Channel;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Artisan;
 
 class DatabaseSeeder extends Seeder
 {
@@ -18,7 +19,11 @@ class DatabaseSeeder extends Seeder
             UserSeeder::class,
             AppSeeder::class,
             ChannelSeeder::class,
-            NotificationSeeder::class
+            NotificationSeeder::class,
+            EmailSeeder::class,
+            SmsSeeder::class,
         ]);
+
+        Artisan::call('passport:install');
     }
 }

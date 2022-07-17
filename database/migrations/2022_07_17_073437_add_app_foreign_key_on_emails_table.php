@@ -13,9 +13,9 @@ return new class extends Migration
      */
     public function up()
     {
-//        Schema::table('web_pushes', function (Blueprint $table) {
-//            $table->foreign('channel_id')->references('id')->on('channels');
-//        });
+        Schema::table('emails', function (Blueprint $table) {
+            $table->foreign('app_id')->references('id')->on('apps');
+        });
     }
 
     /**
@@ -25,8 +25,8 @@ return new class extends Migration
      */
     public function down()
     {
-//        Schema::table('web_pushes', function (Blueprint $table) {
-//            $table->dropForeign('web_pushes_channel_id_foreign');
-//        });
+        Schema::table('emails', function (Blueprint $table) {
+            $table->dropForeign('emails_app_id_foreign');
+        });
     }
 };

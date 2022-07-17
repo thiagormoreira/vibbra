@@ -5,21 +5,30 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreNotificationRequest;
 use App\Models\App;
 use App\Models\Notification;
+use Illuminate\Http\Request;
 
 class NotificationController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         try {
 
-            foreach (Notification::sent()->get() as $notification) {
-                $notifications['notifications'][] = [
+            if($request->has('initdate', 'enddate')) {
+                $notifications = Notification::sentDateBetween($request->initdate, $request->enddate)->get();
+            } else {
+                return response()->json([
+                    'message' => 'Initdate and enddate are required',
+                ], 400);
+            }
+
+            foreach ($notifications as $notification) {
+                $data['notifications'][] = [
                     'notification_id' => $notification->id,
                     'send_date' => $notification->send_date,
                 ];
             }
 
-            return response()->json($notifications, 200);
+            return response()->json($data ?? ['message' => 'No notifications found']);
 
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);

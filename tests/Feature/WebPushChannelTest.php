@@ -9,11 +9,10 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
-class WebPushTest extends TestCase
+class WebPushChannelTest extends TestCase
 {
     public function test_get_web_push_settings()
     {
-
         $app = App::first();
 
         $response = $this->get("/api/v1/apps/{$app->id}/webpushes/settings");
