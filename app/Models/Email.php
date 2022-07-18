@@ -38,16 +38,26 @@ class Email extends Model
                 'server' => [
                     'smtp_name' => $emailConfig->smtp_name,
                     'smtp_port' => $emailConfig->smtp_port,
-                    'user_login' => $emailConfig->smpt_login,
-                    'user_password' => $emailConfig->smpt_password,
+                    'user_login' => $emailConfig->smtp_login,
+                    'user_password' => $emailConfig->smtp_password,
                 ],
                 'sender' => [
                     'name' => $emailConfig->sender_name,
                     'email' => $emailConfig->sender_email,
                 ],
                 'email_templates' => [
-                    'name' => 'template_name',
-                    'uri' => 'template_uri',
+                    [
+                        'name' => 'template_name 1',
+                        'uri' => 'template_uri 1',
+                    ],
+                    [
+                        'name' => 'template_name 2',
+                        'uri' => 'template_uri 2',
+                    ],
+                    [
+                        'name' => 'template_name 3',
+                        'uri' => 'template_uri 3',
+                    ]
                 ]
             ]
         ];
@@ -58,8 +68,8 @@ class Email extends Model
         return [
             'smtp_name' => $data['settings']['server']['smtp_name'],
             'smtp_port' => $data['settings']['server']['smtp_port'],
-            'user_login' => $data['settings']['server']['user_login'],
-            'user_password' => $data['settings']['server']['user_password'],
+            'smtp_login' => $data['settings']['server']['user_login'],
+            'smtp_password' => $data['settings']['server']['user_password'],
             'sender_name' => $data['settings']['sender']['name'],
             'sender_email' => $data['settings']['sender']['email'],
         ];
