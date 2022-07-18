@@ -35,7 +35,9 @@ class WebPush extends Model
 
     public function channel()
     {
-        return $this->channelable()->first();
+        return $this->channelable()->firstOrCreate([
+            'app_id' => $this->app_id,
+        ]);
     }
 
     public function app()

@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreEmailRequest;
+use App\Http\Requests\StoreSmsRequest;
 use App\Http\Requests\UpdateChannelRequest;
 use App\Http\Requests\StoreWebPushRequest;
 use App\Models\Email;
@@ -31,15 +33,29 @@ class ChannelController extends Controller
                     break;
 
                 case 'emails':
-                    return response()->json([
-                        'message' => 'Not implemented yet'
-                    ], 400);
+                    $storeEmailRequest = new StoreEmailRequest();
+                    $data = $request->validate($storeEmailRequest->rules(), $storeEmailRequest->messages());
+
+                    $formattedData = Email::formatData($data);
+
+                    $channelInstance = Email::updateOrCreate([
+                        'app_id' => $app_id,
+                    ], $formattedData);
+
+                    return response()->json(Email::transformData($channelInstance));
                     break;
 
                 case 'sms':
-                    return response()->json([
-                        'message' => 'Not implemented yet'
-                    ], 400);
+                    $storeSmsRequest = new StoreSmsRequest();
+                    $data = $request->validate($storeSmsRequest->rules(), $storeSmsRequest->messages());
+
+                    $formattedData = Sms::formatData($data);
+
+                    $channelInstance = Sms::updateOrCreate([
+                        'app_id' => $app_id,
+                    ], $formattedData);
+
+                    return response()->json(Sms::transformData($channelInstance));
                     break;
 
                 default:
@@ -110,24 +126,34 @@ class ChannelController extends Controller
                     $webPush = WebPush::where('app_id', $app)->first();
 
                     $channel = $webPush->channel();
-                    $previousStatus = $channel->status ? true : false;
 
-                    $channel->status = $data['status'];
-                    $channel->save();
                     break;
 
                 case 'emails':
-                    return response()->json([
-                        'message' => 'Not implemented yet'
-                    ], 400);
+
+                    $email = Email::where('app_id', $app)->first();
+
+                    $channel = $email->channel();
+
                     break;
 
                 case 'sms':
-                    return response()->json([
-                        'message' => 'Not implemented yet'
-                    ], 400);
+
+                    $sms = Sms::where('app_id', $app)->first();
+
+                    $channel = $sms->channel();
+
                     break;
+
+                default:
+                    return response()->json([
+                        'message' => "Invalid channel",
+                    ], 404);
             }
+
+            $previousStatus = $channel->status ? true : false;
+
+            $channel->changeStatus($data['status']);
 
             return response()->json([
                 'previous_status' => $previousStatus,

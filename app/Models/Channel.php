@@ -25,4 +25,10 @@ class Channel extends Model
     {
         return $this->hasOne(WebPush::class);
     }
+
+    public function changeStatus($status)
+    {
+        $this->status = $status ? true : false;
+        $this->save();
+    }
 }
