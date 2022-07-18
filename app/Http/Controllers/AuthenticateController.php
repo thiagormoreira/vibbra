@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
-class Authenticate extends Controller
+class AuthenticateController extends Controller
 {
     public function login(Request $request)
     {

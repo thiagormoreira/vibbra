@@ -1,7 +1,7 @@
 <?php
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\{AppController, AuthenticateController, ChannelController, NotificationController, UserController};
 
 /*
 |--------------------------------------------------------------------------
@@ -18,33 +18,33 @@ Route::group([
     'prefix'     => 'v1',
 ], function () {
 
-    Route::get('/', function (Request $request) {
+    Route::get('/', function () {
         return response()->json([
             'message' => 'Welcome to Vibbraneo API',
             'status' => 'success',
         ]);
     });
 
-    Route::post('/login', [\App\Http\Controllers\Authenticate::class, 'login']);
+    Route::post('/login', [AuthenticateController::class, 'login']);
 
 
     Route::group([
         'middleware' => ['auth:api']
     ], function () {
 
-        Route::post('/users/register', [\App\Http\Controllers\UserController::class, 'store']);
-        Route::get('/users/{user_id}', [\App\Http\Controllers\UserController::class, 'show']);
+        Route::post('/users/register', [UserController::class, 'store']);
+        Route::get('/users/{user_id}', [UserController::class, 'show']);
 
-        Route::post('/apps', [\App\Http\Controllers\AppController::class, 'store']);
-        Route::get('/apps/{app_id}', [\App\Http\Controllers\AppController::class, 'show']);
+        Route::post('/apps', [AppController::class, 'store']);
+        Route::get('/apps/{app_id}', [AppController::class, 'show']);
 
-        Route::get('/apps/{app_id}/{channel}/settings', [\App\Http\Controllers\ChannelController::class, 'show']);
-        Route::put('/apps/{app_id}/{channel}/settings', [\App\Http\Controllers\ChannelController::class, 'edit']);
-        Route::post('/apps/{app_id}/{channel}/settings', [\App\Http\Controllers\ChannelController::class, 'store']);
+        Route::get('/apps/{app_id}/{channel}/settings', [ChannelController::class, 'show']);
+        Route::put('/apps/{app_id}/{channel}/settings', [ChannelController::class, 'edit']);
+        Route::post('/apps/{app_id}/{channel}/settings', [ChannelController::class, 'store']);
 
-        Route::post('/apps/{app_id}/{channel}/notification', [\App\Http\Controllers\NotificationController::class, 'store']);
-        Route::get( '/apps/{app_id}/{channel}/notifications', [\App\Http\Controllers\NotificationController::class, 'index']);
-        Route::get( '/apps/{app_id}/{channel}/notifications/{notification_id}', [\App\Http\Controllers\NotificationController::class, 'show']);
+        Route::post('/apps/{app_id}/{channel}/notification', [NotificationController::class, 'store']);
+        Route::get( '/apps/{app_id}/{channel}/notifications', [NotificationController::class, 'index']);
+        Route::get( '/apps/{app_id}/{channel}/notifications/{notification_id}', [NotificationController::class, 'show']);
 
     });
 

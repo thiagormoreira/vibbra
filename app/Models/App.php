@@ -50,4 +50,14 @@ class App extends Model
     {
         return $this->hasOne(WebPush::class);
     }
+
+    public function email()
+    {
+        return $this->hasOne(Email::class);
+    }
+
+    public function sms()
+    {
+        return $this->hasOne(Sms::class);
+    }
 }

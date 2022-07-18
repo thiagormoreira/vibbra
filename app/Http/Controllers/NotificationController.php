@@ -2,7 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreNotificationRequest;
+use App\Http\Requests\StoreSmsNotificationRequest;
+use App\Http\Requests\StoreWebPushesNotificationRequest;
 use App\Models\App;
 use App\Models\Notification;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -36,11 +37,9 @@ class NotificationController extends Controller
         }
     }
 
-    public function store(StoreNotificationRequest $request, $app_id, $channel)
+    public function store(Request $request, $app_id, $channel)
     {
         try {
-
-            $notificationData = $request->validated();
 
             $app = App::findOrFail($app_id);
 
@@ -52,6 +51,13 @@ class NotificationController extends Controller
 
             switch ($channel){
                 case 'webpushes':
+
+                    $storeWebPushesNotificationRequest = new StoreWebPushesNotificationRequest();
+                    $notificationData = $request->validate(
+                        $storeWebPushesNotificationRequest->rules(),
+                        $storeWebPushesNotificationRequest->messages()
+                    );
+
                     $webPush = $app->webPush;
                     $webPush->site_url_icon = $notificationData['icon_url'];
                     $webPush->welcome_notification_url_redirect = $notificationData['redirect_url'];
@@ -64,7 +70,25 @@ class NotificationController extends Controller
                         'channel_id' => $app->channel->id
                     ]);
 
-                    return response()->json($this->transformData($notification, $webPush), 201);
+                    return response()->json($this->transformWebPushData($notification, $webPush), 201);
+                    break;
+
+                case 'sms':
+
+                    $storeSmsNotificationRequest = new StoreSmsNotificationRequest();
+                    $notificationData = $request->validate(
+                        $storeSmsNotificationRequest->rules(),
+                        $storeSmsNotificationRequest->messages()
+                    );
+
+                    $notification = Notification::create([
+                        'message_text' => $notificationData['message_text'],
+                        'message_title' => 'message_title',
+                        'app_id' => $app->id,
+                        'channel_id' => $app->channel->id
+                    ]);
+
+                    return response()->json($this->transformSmsData($notification), 201);
                     break;
 
                 default:
@@ -113,7 +137,7 @@ class NotificationController extends Controller
         }
     }
 
-    private function transformData($notification, $webPush)
+    private function transformWebPushData($notification, $webPush)
     {
         return [
             "audience_segments" => [
@@ -125,6 +149,19 @@ class NotificationController extends Controller
             "message_text" => $notification->message_text,
             "icon_url" => $webPush->site_url_icon,
             "redirect_url" => $webPush->welcome_notification_url_redirect,
+            "app_id" => $notification->app_id,
+        ];
+    }
+
+    private function transformSmsData($notification)
+    {
+        return [
+            "phone_number" => [
+                "phone_number1",
+                "phone_number2",
+                "phone_number3"
+            ],
+            "message_text" => $notification->message_text,
             "app_id" => $notification->app_id,
         ];
     }
