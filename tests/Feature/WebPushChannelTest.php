@@ -61,7 +61,7 @@ class WebPushChannelTest extends TestCase
         $data = [
             'status' => true
         ];
-        $response = $this->put("/api/v1/apps/{$app->id}/webpushes/settings", $data);
+        $this->put("/api/v1/apps/{$app->id}/webpushes/settings", $data);
 
         $this->assertDatabaseHas('channels', [
             'channelable_type' => 'App\Models\WebPush',

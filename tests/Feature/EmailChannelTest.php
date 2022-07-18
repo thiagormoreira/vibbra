@@ -56,7 +56,7 @@ class EmailChannelTest extends TestCase
         $data = [
             'status' => true
         ];
-        $response = $this->put("/api/v1/apps/{$app->id}/emails/settings", $data);
+        $this->put("/api/v1/apps/{$app->id}/emails/settings", $data);
 
         $this->assertDatabaseHas('channels', [
             'channelable_type' => 'App\Models\Email',

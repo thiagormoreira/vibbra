@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreAppRequest;
 use App\Models\App;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 
@@ -38,7 +39,11 @@ class AppController extends Controller
 
             return response()->json($aux, 200);
 
+        } catch (ModelNotFoundException $e) {
+
+            return response()->json(['error' => 'App not found'], 404);
         } catch (\Exception $e) {
+
             return response()->json(['error' => $e->getMessage()], 500);
         }
     }

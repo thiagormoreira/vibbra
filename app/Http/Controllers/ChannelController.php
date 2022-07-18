@@ -9,6 +9,7 @@ use App\Http\Requests\StoreWebPushRequest;
 use App\Models\Email;
 use App\Models\Sms;
 use App\Models\WebPush;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 
@@ -108,10 +109,12 @@ class ChannelController extends Controller
 
             }
 
+        } catch (ModelNotFoundException $e) {
+
+            return response()->json(['error' => 'App not found'], 404);
         } catch (\Exception $e) {
-            return response()->json([
-                'message' => $e->getMessage(),
-            ]);
+
+            return response()->json(['error' => $e->getMessage()], 500);
         }
     }
 
@@ -123,7 +126,7 @@ class ChannelController extends Controller
             switch ($channel){
                 case 'webpushes':
 
-                    $webPush = WebPush::where('app_id', $app)->first();
+                    $webPush = WebPush::where('app_id', $app)->firstOrFail();
 
                     $channel = $webPush->channel();
 
@@ -131,7 +134,7 @@ class ChannelController extends Controller
 
                 case 'emails':
 
-                    $email = Email::where('app_id', $app)->first();
+                    $email = Email::where('app_id', $app)->firstOrFail();
 
                     $channel = $email->channel();
 
@@ -139,7 +142,7 @@ class ChannelController extends Controller
 
                 case 'sms':
 
-                    $sms = Sms::where('app_id', $app)->first();
+                    $sms = Sms::where('app_id', $app)->firstOrFail();
 
                     $channel = $sms->channel();
 
@@ -160,10 +163,12 @@ class ChannelController extends Controller
                 'current_status' => $channel->status,
             ]);
 
+        } catch (ModelNotFoundException $e) {
+
+            return response()->json(['error' => 'Channel not found'], 404);
         } catch (\Exception $e) {
-            return response()->json([
-                'message' => $e->getMessage(),
-            ]);
+
+            return response()->json(['error' => $e->getMessage()], 500);
         }
     }
 }

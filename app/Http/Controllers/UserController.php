@@ -43,9 +43,10 @@ class UserController extends Controller
 
         } catch (ModelNotFoundException $e) {
 
-            return response()->json([
-                'error' => 'User not found'
-            ], 404);
+            return response()->json(['error' => 'User not found'], 404);
+        } catch (\Exception $e) {
+
+            return response()->json(['error' => $e->getMessage()], 500);
         }
     }
 }
