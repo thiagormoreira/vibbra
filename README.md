@@ -8,9 +8,8 @@ Teste de Backend Sistema de notificação
 ```
 cd project_folder
 composer installl
-./vendor/bin/sail up
+./vendor/bin/sail up -d
 ./vendor/bin/sail artisan migrate:fresh --seed
-./vendor/bin/sail artisan passport:install
 ```
 
 ## Testando
