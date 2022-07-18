@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreSmsNotificationRequest;
 use App\Http\Requests\StoreWebPushesNotificationRequest;
 use App\Models\App;
+use App\Models\Email;
 use App\Models\Notification;
+use App\Models\Sms;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 
@@ -112,15 +114,15 @@ class NotificationController extends Controller
             switch ($channel){
                 case 'webpushes':
                     $webPush = $app->webPush;
-                    return response()->json($webPush->transformData($notification, $webPush));
+                    return response()->json($this->transformWebPushData($notification, $webPush));
                     break;
                 case 'emails':
                     $email = $app->email;
-                    return response()->json($email->transformData($notification, $email));
+                    return response()->json($this->transformEmailData($notification, $email));
                     break;
                 case 'sms':
                     $sms = $app->sms;
-                    return response()->json($sms->transformData($notification, $sms));
+                    return response()->json($this->transformSmsData($notification, $sms));
                     break;
                 default:
                     return response()->json([
